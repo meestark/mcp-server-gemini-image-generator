@@ -11,8 +11,8 @@ from google import genai
 from google.genai import types
 from mcp.server.fastmcp import FastMCP
 
-from prompts import get_image_generation_prompt, get_image_transformation_prompt, get_translate_prompt
-from utils import save_image
+from .prompts import get_image_generation_prompt, get_image_transformation_prompt, get_translate_prompt
+from .utils import save_image
 
 
 # Setup logging

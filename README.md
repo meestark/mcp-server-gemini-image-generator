@@ -159,40 +159,44 @@ npx -y @smithery/cli install @qhdrl12/mcp-server-gemini-image-gen --client claud
 
 ### Manual Installation
 1. Clone the repository:
-```
-git clone https://github.com/your-username/gemini-image-generator.git
-cd gemini-image-generator
+```bash
+git clone https://github.com/your-username/mcp-server-gemini-image-generator.git
+cd mcp-server-gemini-image-generator
 ```
 
 2. Create a virtual environment and install dependencies:
-```
-# Using regular venv
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-
-# Or using uv
+```bash
+# Using uv (recommended)
 uv venv
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv pip install -e .
+
+# Or using regular venv
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -e .
 ```
 
-3. Copy the example environment file and add your API key:
-```
-cp .env.example .env
+3. Set up environment variables (choose one method):
+
+**Method A: Using .env file (optional)**
+```bash
+# Create .env file in the project root
+cat > .env << 'EOF'
+GEMINI_API_KEY=your-gemini-api-key-here
+OUTPUT_IMAGE_PATH=/path/to/save/images
+EOF
 ```
 
-4. Edit the `.env` file to include your Google Gemini API key and preferred output path:
-```
-GEMINI_API_KEY="your-gemini-api-key-here"
-OUTPUT_IMAGE_PATH="/path/to/save/images"
-```
+**Method B: Set directly in Claude Desktop config (recommended)**
+- Set environment variables directly in the `claude_desktop_config.json` (shown in configuration section below)
 
 ### Configure Claude Desktop
 
 Add the following to your `claude_desktop_config.json`:
 
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
@@ -201,9 +205,40 @@ Add the following to your `claude_desktop_config.json`:
             "command": "uv",
             "args": [
                 "--directory",
-                "/absolute/path/to/mcp-server-gemini-image-generator/src/mcp_server_gemini_image_generator",
+                "/absolute/path/to/mcp-server-gemini-image-generator",
                 "run",
-                "server.py"
+                "mcp-server-gemini-image-generator"
+            ],
+            "env": {
+                "GEMINI_API_KEY": "your-actual-gemini-api-key-here",
+                "OUTPUT_IMAGE_PATH": "/absolute/path/to/your/images/directory"
+            }
+        }
+    }
+}
+```
+
+**Important Configuration Notes:**
+
+1. **Replace paths with your actual paths:**
+   - Change `/absolute/path/to/mcp-server-gemini-image-generator` to the actual location where you cloned this repository
+   - Change `/absolute/path/to/your/images/directory` to where you want generated images to be saved
+
+2. **Environment Variables:**
+   - Replace `your-actual-gemini-api-key-here` with your real Gemini API key from Google AI Studio
+   - Use absolute paths for `OUTPUT_IMAGE_PATH` to ensure images are saved correctly
+
+3. **Example with real paths:**
+```json
+{
+    "mcpServers": {
+        "gemini-image-generator": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "/Users/username/Projects/mcp-server-gemini-image-generator",
+                "run",
+                "mcp-server-gemini-image-generator"
             ],
             "env": {
                 "GEMINI_API_KEY": "GEMINI_API_KEY",
