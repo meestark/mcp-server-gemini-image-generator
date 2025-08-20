@@ -1,76 +1,77 @@
-# Gemini 이미지 생성기 MCP 서버 (수정 버전)
+# Gemini 画像生成器 MCP サーバー (修正版)
 
-Claude Desktop에서 Google의 Gemini AI를 사용하여 고품질 이미지를 생성하고 편집할 수 있는 MCP 서버입니다.
+Claude DesktopでGoogle の Gemini AIを使用して高品質な画像を生成・編集できる MCP サーバーです。
 
-## 🚀 주요 특징
+## 🚀 主な特徴
 
-- **텍스트로 이미지 생성**: Gemini 2.0 Flash를 사용한 텍스트-이미지 변환
-- **이미지 변환**: 기존 이미지를 텍스트 프롬프트로 수정
-- **한글 지원**: 한글 프롬프트 자동 번역 및 최적화
-- **지능형 파일명 생성**: AI가 프롬프트 기반으로 파일명 자동 생성
-- **로컬 저장**: 생성된 이미지를 지정한 폴더에 자동 저장
+- **テキストから画像生成**: Gemini 2.0 Flash を使用したテキスト→画像変換
+- **画像変換**: 既存の画像をテキストプロンプトで修正
+- **多言語対応**: 日本語・韓国語・中国語プロンプトの自動英語翻訳・最適化
+- **AI ファイル名生成**: プロンプト基準でファイル名を自動生成
+- **ローカル保存**: 生成された画像を指定フォルダに自動保存
+- **Claude チャット内表示**: 生成された画像をチャット画面で直接確認
 
-## 🛠️ 설치 요구사항
+## 🛠️ インストール要件
 
-- **Python 3.11 이상**
-- **Google Gemini API 키**
-- **Claude Desktop** 또는 기타 MCP 호환 클라이언트
+- **Python 3.11 以上**
+- **Google Gemini API キー**
+- **Claude Desktop** またはその他 MCP 互換クライアント
 
-## 📋 1단계: Gemini API 키 발급
+## 📋 ステップ1: Gemini API キー発行
 
-1. [Google AI Studio API Keys 페이지](https://aistudio.google.com/apikey) 접속
-2. Google 계정으로 로그인
-3. **"Create API Key"** 클릭
-4. 생성된 API 키 복사 (나중에 사용)
+1. [Google AI Studio API Keys ページ](https://aistudio.google.com/apikey) にアクセス
+2. Google アカウントでログイン
+3. **"Create API Key"** をクリック
+4. 生成された API キーをコピー（後で使用）
 
-## 💾 2단계: MCP 서버 설치
+## 💾 ステップ2: MCP サーバーインストール
 
-### 자동 설치 (권장)
+### 自動インストール（推奨）
 ```bash
-# 저장소 클론
+# リポジトリクローン
 git clone https://github.com/my13each/mcp-server-gemini-image-generator-fixed.git
 cd mcp-server-gemini-image-generator-fixed
 
-# 가상환경 생성 및 활성화
+# 仮想環境作成・有効化
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# 패키지 설치
+# パッケージインストール
 pip install -e .
 ```
 
-### 설치 확인
+### インストール確認
 ```bash
-# 서버가 정상 실행되는지 테스트
+# サーバーが正常実行されるかテスト
 python -m mcp_server_gemini_image_generator.server
 ```
-`Starting Gemini Image Generator MCP server...` 메시지가 나오면 성공! (Ctrl+C로 종료)
+`Starting Gemini Image Generator MCP server...` メッセージが表示されれば成功！（Ctrl+C で終了）
 
-## ⚙️ 3단계: Claude Desktop 설정
+## ⚙️ ステップ3: Claude Desktop 設定
 
-### 설정 파일 위치
+### 設定ファイル場所
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
-### 설정 파일 내용
+### 設定ファイル内容
 ```json
 {
   "mcpServers": {
     "gemini-image-generator": {
-      "command": "/절대경로/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "command": "/絶対パス/mcp-server-gemini-image-generator-fixed/venv/bin/python",
       "args": [
         "-m", "mcp_server_gemini_image_generator.server"
       ],
       "env": {
-        "GEMINI_API_KEY": "여기에_실제_API키_입력",
-        "OUTPUT_IMAGE_PATH": "/Users/사용자명/Pictures/ai_generated"
+        "GEMINI_API_KEY": "ここに実際のAPIキーを入力",
+        "OUTPUT_IMAGE_PATH": "/Users/ユーザー名/Pictures/ai_generated"
       }
     }
   }
 }
 ```
 
-### 실제 설정 예시
+### 実際の設定例
 ```json
 {
   "mcpServers": {
@@ -80,7 +81,7 @@ python -m mcp_server_gemini_image_generator.server
         "-m", "mcp_server_gemini_image_generator.server"
       ],
       "env": {
-        "GEMINI_API_KEY": "AIzaSy...(실제_API키)",
+        "GEMINI_API_KEY": "AIzaSy...(実際のAPIキー)",
         "OUTPUT_IMAGE_PATH": "/Users/jp17463/Pictures/ai_generated"
       }
     }
@@ -88,96 +89,97 @@ python -m mcp_server_gemini_image_generator.server
 }
 ```
 
-### 🚨 중요사항
-1. **절대 경로 사용**: 모든 경로는 전체 경로로 입력
-2. **API 키 교체**: `여기에_실제_API키_입력` 부분을 발급받은 실제 키로 교체
-3. **이미지 폴더**: `OUTPUT_IMAGE_PATH`에 지정한 폴더가 미리 생성되어 있어야 함
+### 🚨 重要事項
+1. **絶対パス使用**: すべてのパスは完全パスで入力
+2. **API キー置換**: `ここに実際のAPIキーを入力` 部分を発行した実際のキーに置換
+3. **画像フォルダ**: `OUTPUT_IMAGE_PATH` に指定したフォルダが事前に作成されている必要があります
 
-### 이미지 저장 폴더 생성
+### 画像保存フォルダ作成
 ```bash
 mkdir -p ~/Pictures/ai_generated
 ```
 
-## 🎯 4단계: 실행 및 테스트
+## 🎯 ステップ4: 実行・テスト
 
-1. **Claude Desktop 재시작**: 설정 후 완전히 종료하고 다시 시작
-2. **연결 확인**: Claude Desktop에서 MCP 서버가 연결되었는지 확인
-3. **테스트**: "고양이 그림을 그려줘"라고 요청해보기
+1. **Claude Desktop 再起動**: 設定後完全に終了して再起動
+2. **接続確認**: Claude Desktop で MCP サーバーが接続されたか確認
+3. **テスト**: 「猫の絵を描いて」とリクエストしてみる
 
-## 📖 사용법
+## 📖 使用方法
 
-### 이미지 생성
+### 画像生成
 ```
-아름다운 후지산과 벚꽃이 있는 일본 풍경을 그려줘
-```
-
-### 이미지 변환 (파일 경로)
-```
-/Users/username/image.jpg 이 이미지에 무지개를 추가해줘
+美しい富士山と桜がある日本の風景を描いて
 ```
 
-### 이미지 변환 (업로드)
-이미지를 Claude에 업로드한 후:
+### 画像変換（ファイルパス）
 ```
-이 이미지를 밤 풍경으로 바꿔줘
+/Users/username/image.jpg この画像に虹を追加して
 ```
 
-## 🔧 문제 해결
+### 画像変換（アップロード）
+画像を Claude にアップロード後:
+```
+この画像を夜の風景に変えて
+```
 
-### 서버 연결 실패
-1. **로그 확인**: Claude Desktop의 로그 폴더에서 `gemini-image-generator.log` 확인
-2. **경로 확인**: `claude_desktop_config.json`의 Python 경로가 정확한지 확인
-3. **권한 확인**: 이미지 저장 폴더에 쓰기 권한이 있는지 확인
+## 🔧 トラブルシューティング
 
-### API 키 오류
-1. **키 유효성**: Google AI Studio에서 API 키가 활성화되었는지 확인
-2. **따옴표 확인**: 설정 파일에서 API 키가 따옴표로 감싸져 있는지 확인
+### サーバー接続失敗
+1. **ログ確認**: Claude Desktop のログフォルダで `gemini-image-generator.log` を確認
+2. **パス確認**: `claude_desktop_config.json` の Python パスが正確か確認
+3. **権限確認**: 画像保存フォルダに書き込み権限があるか確認
 
-### 수동 테스트
+### API キーエラー
+1. **キー有効性**: Google AI Studio で API キーが有効化されているか確認
+2. **引用符確認**: 設定ファイルで API キーが引用符で囲まれているか確認
+
+### 手動テスト
 ```bash
 cd ~/mcp-server-gemini-image-generator-fixed
 source venv/bin/activate
-export GEMINI_API_KEY="실제_API키"
+export GEMINI_API_KEY="実際のAPIキー"
 export OUTPUT_IMAGE_PATH="~/Pictures/ai_generated"
 python -m mcp_server_gemini_image_generator.server
 ```
 
-## 📊 제공되는 도구
+## 📊 提供ツール
 
 ### 1. `generate_image_from_text`
-- **기능**: 텍스트 프롬프트로 새 이미지 생성
-- **입력**: 이미지 설명 텍스트
-- **출력**: 생성된 이미지 파일 경로
+- **機能**: テキストプロンプトで新しい画像生成
+- **入力**: 画像説明テキスト
+- **出力**: 生成された画像（Claude チャット内表示 + ローカル保存）
 
 ### 2. `transform_image_from_file`
-- **기능**: 파일 경로의 이미지를 텍스트 프롬프트로 변환
-- **입력**: 이미지 파일 경로, 변환 프롬프트
-- **출력**: 변환된 이미지 파일 경로
+- **機能**: ファイルパスの画像をテキストプロンプトで変換
+- **入力**: 画像ファイルパス、変換プロンプト
+- **出力**: 変換された画像（Claude チャット内表示 + ローカル保存）
 
 ### 3. `transform_image_from_encoded`
-- **기능**: Base64 인코딩된 이미지를 텍스트 프롬프트로 변환
-- **입력**: Base64 이미지 데이터, 변환 프롬프트
-- **출력**: 변환된 이미지 파일 경로
+- **機能**: Base64 エンコードされた画像をテキストプロンプトで変換
+- **入力**: Base64 画像データ、変換プロンプト
+- **出力**: 変換された画像（Claude チャット内表示 + ローカル保存）
 
-## 📝 원본과의 차이점
+## 📝 オリジナルからの相違点
 
-이 수정 버전은 원본 저장소의 다음 문제들을 해결했습니다:
+この修正版は元のリポジトリの以下の問題を解決しました:
 
-- ❌ **원본 문제**: JSON 직렬화 오류 (`invalid utf-8 sequence`)
-- ❌ **원본 문제**: MCP 도구가 바이너리 데이터 반환으로 인한 실행 실패
-- ✅ **수정 사항**: 파일 경로만 반환하여 안정적인 동작
-- ✅ **수정 사항**: Claude Desktop에서 완벽하게 작동
+- ❌ **元の問題**: JSON シリアル化エラー (`invalid utf-8 sequence`)
+- ❌ **元の問題**: MCP ツールがバイナリデータ返却により実行失敗
+- ✅ **修正事項**: ファイルパス返却で安定的な動作
+- ✅ **修正事項**: Claude Desktop で完璧に動作
+- ✅ **修正事項**: 生成された画像を Claude チャット内で直接確認可能
 
-## 🤝 기여 및 문의
+## 🤝 貢献・お問い合わせ
 
-- **원본 저장소**: [qhdrl12/mcp-server-gemini-image-generator](https://github.com/qhdrl12/mcp-server-gemini-image-generator)
-- **수정 버전**: [my13each/mcp-server-gemini-image-generator-fixed](https://github.com/my13each/mcp-server-gemini-image-generator-fixed)
-- **이슈 제보**: GitHub Issues 탭에서 문제 신고
+- **元のリポジトリ**: [qhdrl12/mcp-server-gemini-image-generator](https://github.com/qhdrl12/mcp-server-gemini-image-generator)
+- **修正版**: [my13each/mcp-server-gemini-image-generator-fixed](https://github.com/my13each/mcp-server-gemini-image-generator-fixed)
+- **問題報告**: GitHub Issues タブで問題を報告
 
-## 📄 라이선스
+## 📄 ライセンス
 
-MIT License - 원본 프로젝트와 동일
+MIT License - 元のプロジェクトと同じ
 
 ---
 
-**팁**: 처음 설정할 때는 단계별로 차근차근 진행하시고, 문제가 생기면 로그 파일을 먼저 확인해보세요! 🚀
+**ヒント**: 初回設定時はステップごとに進め、問題が発生した場合はまずログファイルを確認してください！ 🚀
