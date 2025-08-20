@@ -1,282 +1,183 @@
-[![MseeP Badge](https://mseep.net/pr/qhdrl12-mcp-server-gemini-image-generator-badge.jpg)](https://mseep.ai/app/qhdrl12-mcp-server-gemini-image-generator)
-[![smithery badge](https://smithery.ai/badge/@qhdrl12/mcp-server-gemini-image-gen)](https://smithery.ai/server/@qhdrl12/mcp-server-gemini-image-gen)
+# Gemini 이미지 생성기 MCP 서버 (수정 버전)
 
-<a href="https://glama.ai/mcp/servers/@qhdrl12/mcp-server-gemini-image-generator">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@qhdrl12/mcp-server-gemini-image-generator/badge" alt="Gemini Image Generator Server MCP server" />
-</a>
+Claude Desktop에서 Google의 Gemini AI를 사용하여 고품질 이미지를 생성하고 편집할 수 있는 MCP 서버입니다.
 
-# Gemini Image Generator MCP Server
+## 🚀 주요 특징
 
-Generate high-quality images from text prompts using Google's Gemini model through the MCP protocol.
+- **텍스트로 이미지 생성**: Gemini 2.0 Flash를 사용한 텍스트-이미지 변환
+- **이미지 변환**: 기존 이미지를 텍스트 프롬프트로 수정
+- **한글 지원**: 한글 프롬프트 자동 번역 및 최적화
+- **지능형 파일명 생성**: AI가 프롬프트 기반으로 파일명 자동 생성
+- **로컬 저장**: 생성된 이미지를 지정한 폴더에 자동 저장
 
-## Overview
+## 🛠️ 설치 요구사항
 
-This MCP server allows any AI assistant to generate images using Google's Gemini AI model. The server handles prompt engineering, text-to-image conversion, filename generation, and local image storage, making it easy to create and manage AI-generated images through any MCP client.
+- **Python 3.11 이상**
+- **Google Gemini API 키**
+- **Claude Desktop** 또는 기타 MCP 호환 클라이언트
 
-## Features
+## 📋 1단계: Gemini API 키 발급
 
-- Text-to-image generation using Gemini 2.0 Flash
-- Image-to-image transformation based on text prompts
-- Support for both file-based and base64-encoded images
-- Automatic intelligent filename generation based on prompts
-- Automatic translation of non-English prompts
-- Local image storage with configurable output path
-- Strict text exclusion from generated images
-- High-resolution image output
-- Direct access to both image data and file path
+1. [Google AI Studio API Keys 페이지](https://aistudio.google.com/apikey) 접속
+2. Google 계정으로 로그인
+3. **"Create API Key"** 클릭
+4. 생성된 API 키 복사 (나중에 사용)
 
-## Available MCP Tools
+## 💾 2단계: MCP 서버 설치
 
-The server provides the following MCP tools for AI assistants:
-
-### 1. `generate_image_from_text`
-
-Creates a new image from a text prompt description.
-
-```
-generate_image_from_text(prompt: str) -> Tuple[bytes, str]
-```
-
-**Parameters:**
-- `prompt`: Text description of the image you want to generate
-
-**Returns:**
-- A tuple containing:
-  - Raw image data (bytes)
-  - Path to the saved image file (str)
-
-This dual return format allows AI assistants to either work with the image data directly or reference the saved file path.
-
-**Examples:**
-- "Generate an image of a sunset over mountains"
-- "Create a photorealistic flying pig in a sci-fi city"
-
-#### Example Output
-
-This image was generated using the prompt:
-
-```
-"Hi, can you create a 3d rendered image of a pig with wings and a top hat flying over a happy futuristic scifi city with lots of greenery?"
-```
-
-![Flying pig over sci-fi city](examples/flying_pig_scifi_city.png)
-
-*A 3D rendered pig with wings and a top hat flying over a futuristic sci-fi city filled with greenery*
-
-### Known Issues
-
-When using this MCP server with Claude Desktop Host:
-
-1. **Performance Issues**: Using `transform_image_from_encoded` may take significantly longer to process compared to other methods. This is due to the overhead of transferring large base64-encoded image data through the MCP protocol.
-
-2. **Path Resolution Problems**: There may be issues with correctly resolving image paths when using Claude Desktop Host. The host application might not properly interpret the returned file paths, making it difficult to access the generated images.
-
-For the best experience, consider using alternative MCP clients or the `transform_image_from_file` method when possible. 
-
-### 2. `transform_image_from_encoded`
-
-Transforms an existing image based on a text prompt using base64-encoded image data.
-
-```
-transform_image_from_encoded(encoded_image: str, prompt: str) -> Tuple[bytes, str]
-```
-
-**Parameters:**
-- `encoded_image`: Base64 encoded image data with format header (must be in format: "data:image/[format];base64,[data]")
-- `prompt`: Text description of how you want to transform the image
-
-**Returns:**
-- A tuple containing:
-  - Raw transformed image data (bytes)
-  - Path to the saved transformed image file (str)
-
-**Example:**
-- "Add snow to this landscape"
-- "Change the background to a beach"
-
-### 3. `transform_image_from_file`
-
-Transforms an existing image file based on a text prompt.
-
-```
-transform_image_from_file(image_file_path: str, prompt: str) -> Tuple[bytes, str]
-```
-
-**Parameters:**
-- `image_file_path`: Path to the image file to be transformed
-- `prompt`: Text description of how you want to transform the image
-
-**Returns:**
-- A tuple containing:
-  - Raw transformed image data (bytes)
-  - Path to the saved transformed image file (str)
-
-**Examples:**
-- "Add a llama next to the person in this image"
-- "Make this daytime scene look like night time"
-
-#### Example Transformation
-
-Using the flying pig image created above, we applied a transformation with the following prompt:
-
-```
-"Add a cute baby whale flying alongside the pig"
-```
-
-**Before:**
-![Flying pig over sci-fi city](examples/flying_pig_scifi_city.png)
-
-**After:**
-![Flying pig with baby whale](examples/pig_cute_baby_whale.png)
-
-*The original flying pig image with a cute baby whale added flying alongside it*
-
-## Setup
-
-### Prerequisites
-
-- Python 3.11+
-- Google AI API key (Gemini)
-- MCP host application (Claude Desktop App, Cursor, or other MCP-compatible clients)
-
-### Getting a Gemini API Key
-
-1. Visit [Google AI Studio API Keys page](https://aistudio.google.com/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy your new API key for use in the configuration
-5. Note: The API key provides a certain quota of free usage per month. You can check your usage in the Google AI Studio
-
-### Installation
-
-### Installing via Smithery
-
-To install Gemini Image Generator MCP for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@qhdrl12/mcp-server-gemini-image-gen):
-
+### 자동 설치 (권장)
 ```bash
-npx -y @smithery/cli install @qhdrl12/mcp-server-gemini-image-gen --client claude
-```
+# 저장소 클론
+git clone https://github.com/my13each/mcp-server-gemini-image-generator-fixed.git
+cd mcp-server-gemini-image-generator-fixed
 
-### Manual Installation
-1. Clone the repository:
-```bash
-git clone https://github.com/your-username/mcp-server-gemini-image-generator.git
-cd mcp-server-gemini-image-generator
-```
+# 가상환경 생성 및 활성화
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-2. Create a virtual environment and install dependencies:
-```bash
-# Using uv (recommended)
-uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-uv pip install -e .
-
-# Or using regular venv
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# 패키지 설치
 pip install -e .
 ```
 
-3. Set up environment variables (choose one method):
-
-**Method A: Using .env file (optional)**
+### 설치 확인
 ```bash
-# Create .env file in the project root
-cat > .env << 'EOF'
-GEMINI_API_KEY=your-gemini-api-key-here
-OUTPUT_IMAGE_PATH=/path/to/save/images
-EOF
+# 서버가 정상 실행되는지 테스트
+python -m mcp_server_gemini_image_generator.server
 ```
+`Starting Gemini Image Generator MCP server...` 메시지가 나오면 성공! (Ctrl+C로 종료)
 
-**Method B: Set directly in Claude Desktop config (recommended)**
-- Set environment variables directly in the `claude_desktop_config.json` (shown in configuration section below)
+## ⚙️ 3단계: Claude Desktop 설정
 
-### Configure Claude Desktop
-
-Add the following to your `claude_desktop_config.json`:
-
+### 설정 파일 위치
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
+### 설정 파일 내용
 ```json
 {
-    "mcpServers": {
-        "gemini-image-generator": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "/absolute/path/to/mcp-server-gemini-image-generator",
-                "run",
-                "mcp-server-gemini-image-generator"
-            ],
-            "env": {
-                "GEMINI_API_KEY": "your-actual-gemini-api-key-here",
-                "OUTPUT_IMAGE_PATH": "/absolute/path/to/your/images/directory"
-            }
-        }
+  "mcpServers": {
+    "gemini-image-generator": {
+      "command": "/절대경로/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "args": [
+        "-m", "mcp_server_gemini_image_generator.server"
+      ],
+      "env": {
+        "GEMINI_API_KEY": "여기에_실제_API키_입력",
+        "OUTPUT_IMAGE_PATH": "/Users/사용자명/Pictures/ai_generated"
+      }
     }
+  }
 }
 ```
 
-**Important Configuration Notes:**
-
-1. **Replace paths with your actual paths:**
-   - Change `/absolute/path/to/mcp-server-gemini-image-generator` to the actual location where you cloned this repository
-   - Change `/absolute/path/to/your/images/directory` to where you want generated images to be saved
-
-2. **Environment Variables:**
-   - Replace `your-actual-gemini-api-key-here` with your real Gemini API key from Google AI Studio
-   - Use absolute paths for `OUTPUT_IMAGE_PATH` to ensure images are saved correctly
-
-3. **Example with real paths:**
+### 실제 설정 예시
 ```json
 {
-    "mcpServers": {
-        "gemini-image-generator": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "/Users/username/Projects/mcp-server-gemini-image-generator",
-                "run",
-                "mcp-server-gemini-image-generator"
-            ],
-            "env": {
-                "GEMINI_API_KEY": "GEMINI_API_KEY",
-                "OUTPUT_IMAGE_PATH": "OUTPUT_IMAGE_PATH"
-            }
-        }
+  "mcpServers": {
+    "gemini-image-generator": {
+      "command": "/Users/jp17463/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "args": [
+        "-m", "mcp_server_gemini_image_generator.server"
+      ],
+      "env": {
+        "GEMINI_API_KEY": "AIzaSy...(실제_API키)",
+        "OUTPUT_IMAGE_PATH": "/Users/jp17463/Pictures/ai_generated"
+      }
     }
+  }
 }
 ```
 
-## Usage
+### 🚨 중요사항
+1. **절대 경로 사용**: 모든 경로는 전체 경로로 입력
+2. **API 키 교체**: `여기에_실제_API키_입력` 부분을 발급받은 실제 키로 교체
+3. **이미지 폴더**: `OUTPUT_IMAGE_PATH`에 지정한 폴더가 미리 생성되어 있어야 함
 
-Once installed and configured, you can ask Claude to generate or transform images using prompts like:
-
-### Generating New Images
-- "Generate an image of a sunset over mountains"
-- "Create an illustration of a futuristic cityscape"
-- "Make a picture of a cat wearing sunglasses"
-
-### Transforming Existing Images
-- "Transform this image by adding snow to the scene"
-- "Edit this photo to make it look like it was taken at night"
-- "Add a dragon flying in the background of this picture"
-
-The generated/transformed images will be saved to your configured output path and displayed in Claude. With the updated return types, AI assistants can also work directly with the image data without needing to access the saved files.
-
-## Testing
-
-You can test the application by running the FastMCP development server:
-
-```
-fastmcp dev server.py
+### 이미지 저장 폴더 생성
+```bash
+mkdir -p ~/Pictures/ai_generated
 ```
 
-This command starts a local development server and makes the MCP Inspector available at http://localhost:5173/. 
-The MCP Inspector provides a convenient web interface where you can directly test the image generation tool without needing to use Claude or another MCP client. 
-You can enter text prompts, execute the tool, and see the results immediately, which is helpful for development and debugging.
+## 🎯 4단계: 실행 및 테스트
 
-## License
+1. **Claude Desktop 재시작**: 설정 후 완전히 종료하고 다시 시작
+2. **연결 확인**: Claude Desktop에서 MCP 서버가 연결되었는지 확인
+3. **테스트**: "고양이 그림을 그려줘"라고 요청해보기
 
-MIT License
+## 📖 사용법
+
+### 이미지 생성
+```
+아름다운 후지산과 벚꽃이 있는 일본 풍경을 그려줘
+```
+
+### 이미지 변환 (파일 경로)
+```
+/Users/username/image.jpg 이 이미지에 무지개를 추가해줘
+```
+
+### 이미지 변환 (업로드)
+이미지를 Claude에 업로드한 후:
+```
+이 이미지를 밤 풍경으로 바꿔줘
+```
+
+## 🔧 문제 해결
+
+### 서버 연결 실패
+1. **로그 확인**: Claude Desktop의 로그 폴더에서 `gemini-image-generator.log` 확인
+2. **경로 확인**: `claude_desktop_config.json`의 Python 경로가 정확한지 확인
+3. **권한 확인**: 이미지 저장 폴더에 쓰기 권한이 있는지 확인
+
+### API 키 오류
+1. **키 유효성**: Google AI Studio에서 API 키가 활성화되었는지 확인
+2. **따옴표 확인**: 설정 파일에서 API 키가 따옴표로 감싸져 있는지 확인
+
+### 수동 테스트
+```bash
+cd ~/mcp-server-gemini-image-generator-fixed
+source venv/bin/activate
+export GEMINI_API_KEY="실제_API키"
+export OUTPUT_IMAGE_PATH="~/Pictures/ai_generated"
+python -m mcp_server_gemini_image_generator.server
+```
+
+## 📊 제공되는 도구
+
+### 1. `generate_image_from_text`
+- **기능**: 텍스트 프롬프트로 새 이미지 생성
+- **입력**: 이미지 설명 텍스트
+- **출력**: 생성된 이미지 파일 경로
+
+### 2. `transform_image_from_file`
+- **기능**: 파일 경로의 이미지를 텍스트 프롬프트로 변환
+- **입력**: 이미지 파일 경로, 변환 프롬프트
+- **출력**: 변환된 이미지 파일 경로
+
+### 3. `transform_image_from_encoded`
+- **기능**: Base64 인코딩된 이미지를 텍스트 프롬프트로 변환
+- **입력**: Base64 이미지 데이터, 변환 프롬프트
+- **출력**: 변환된 이미지 파일 경로
+
+## 📝 원본과의 차이점
+
+이 수정 버전은 원본 저장소의 다음 문제들을 해결했습니다:
+
+- ❌ **원본 문제**: JSON 직렬화 오류 (`invalid utf-8 sequence`)
+- ❌ **원본 문제**: MCP 도구가 바이너리 데이터 반환으로 인한 실행 실패
+- ✅ **수정 사항**: 파일 경로만 반환하여 안정적인 동작
+- ✅ **수정 사항**: Claude Desktop에서 완벽하게 작동
+
+## 🤝 기여 및 문의
+
+- **원본 저장소**: [qhdrl12/mcp-server-gemini-image-generator](https://github.com/qhdrl12/mcp-server-gemini-image-generator)
+- **수정 버전**: [my13each/mcp-server-gemini-image-generator-fixed](https://github.com/my13each/mcp-server-gemini-image-generator-fixed)
+- **이슈 제보**: GitHub Issues 탭에서 문제 신고
+
+## 📄 라이선스
+
+MIT License - 원본 프로젝트와 동일
+
+---
+
+**팁**: 처음 설정할 때는 단계별로 차근차근 진행하시고, 문제가 생기면 로그 파일을 먼저 확인해보세요! 🚀
