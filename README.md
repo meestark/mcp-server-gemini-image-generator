@@ -58,7 +58,7 @@ python -m mcp_server_gemini_image_generator.server
 {
   "mcpServers": {
     "gemini-image-generator": {
-      "command": "/絶対パス/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "command": "/Users/ユーザー名/mcp-server-gemini-image-generator-fixed/venv/bin/python",
       "args": [
         "-m", "mcp_server_gemini_image_generator.server"
       ],
@@ -76,13 +76,13 @@ python -m mcp_server_gemini_image_generator.server
 {
   "mcpServers": {
     "gemini-image-generator": {
-      "command": "/Users/jp17463/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "command": "/Users/ユーザー名/mcp-server-gemini-image-generator-fixed/venv/bin/python",
       "args": [
         "-m", "mcp_server_gemini_image_generator.server"
       ],
       "env": {
         "GEMINI_API_KEY": "AIzaSy...(実際のAPIキー)",
-        "OUTPUT_IMAGE_PATH": "/Users/jp17463/Pictures/ai_generated"
+        "OUTPUT_IMAGE_PATH": "/Users/ユーザー名/Pictures/ai_generated"
       }
     }
   }
