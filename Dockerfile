@@ -28,4 +28,4 @@ ENV OUTPUT_IMAGE_PATH=${OUTPUT_IMAGE_PATH}
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Set the entrypoint to the MCP server command
-CMD ["mcp-server-gemini-image-generator"]
+CMD ["gemini-image-mcp"]

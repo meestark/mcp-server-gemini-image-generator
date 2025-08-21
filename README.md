@@ -29,8 +29,8 @@ Claude DesktopでGoogle の Gemini AIを使用して高品質な画像を生成�
 ### 自動インストール（推奨）
 ```bash
 # リポジトリクローン
-git clone https://github.com/my13each/mcp-server-gemini-image-generator-fixed.git
-cd mcp-server-gemini-image-generator-fixed
+git clone https://github.com/sungmin-koo-ai/GeminiImageMCP.git
+cd GeminiImageMCP
 
 # 仮想環境作成・有効化
 python3 -m venv venv
@@ -58,7 +58,7 @@ python -m mcp_server_gemini_image_generator.server
 {
   "mcpServers": {
     "gemini-image-generator": {
-      "command": "/Users/ユーザー名/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "command": "/Users/ユーザー名/GeminiImageMCP/venv/bin/python",
       "args": [
         "-m", "mcp_server_gemini_image_generator.server"
       ],
@@ -76,7 +76,7 @@ python -m mcp_server_gemini_image_generator.server
 {
   "mcpServers": {
     "gemini-image-generator": {
-      "command": "/Users/ユーザー名/mcp-server-gemini-image-generator-fixed/venv/bin/python",
+      "command": "/Users/ユーザー名/GeminiImageMCP/venv/bin/python",
       "args": [
         "-m", "mcp_server_gemini_image_generator.server"
       ],
@@ -136,7 +136,7 @@ mkdir -p ~/Pictures/ai_generated
 
 ### 手動テスト
 ```bash
-cd ~/mcp-server-gemini-image-generator-fixed
+cd ~/GeminiImageMCP
 source venv/bin/activate
 export GEMINI_API_KEY="実際のAPIキー"
 export OUTPUT_IMAGE_PATH="~/Pictures/ai_generated"
@@ -173,7 +173,7 @@ python -m mcp_server_gemini_image_generator.server
 ## 🤝 貢献・お問い合わせ
 
 - **元のリポジトリ**: [qhdrl12/mcp-server-gemini-image-generator](https://github.com/qhdrl12/mcp-server-gemini-image-generator)
-- **修正版**: [my13each/mcp-server-gemini-image-generator-fixed](https://github.com/my13each/mcp-server-gemini-image-generator-fixed)
+- **修正版**: [sungmin-koo-ai/GeminiImageMCP](https://github.com/sungmin-koo-ai/GeminiImageMCP)
 - **問題報告**: GitHub Issues タブで問題を報告
 
 ## 📄 ライセンス

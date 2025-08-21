@@ -1,10 +1,10 @@
 [project]
-name = "mcp-server-gemini-image-generator"
+name = "GeminiImageMCP"
 version = "0.1.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{name = "bongki Lee",email = "qhdrl12@gmail.com"}]
+authors = [{name = "Sungmin Koo",email = "sungmin.koo@nhn-playart.com"}]
 keywords = ["http", "mcp", "llm", "automation"]
 license = { text = "MIT" }
 dependencies = [
@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mcp-server-gemini-image-generator = "mcp_server_gemini_image_generator:main"
+gemini-image-mcp = "mcp_server_gemini_image_generator:main"
 
 [build-system]
 requires = ["hatchling"]

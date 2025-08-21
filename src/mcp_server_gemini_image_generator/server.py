@@ -24,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize MCP server
-mcp = FastMCP("mcp-server-gemini-image-generator")
+mcp = FastMCP("GeminiImageMCP")
 
 
 # ==================== Gemini API Interaction ====================
@@ -343,7 +343,7 @@ async def transform_image_from_file(image_file_path: str, prompt: str) -> str:
 
 
 def main():
-    logger.info("Starting Gemini Image Generator MCP server...")
+    logger.info("Starting GeminiImageMCP server...")
     mcp.run(transport="stdio")
     logger.info("Server stopped")
 
