@@ -43,7 +43,7 @@ pip install -e .
 ### インストール確認
 ```bash
 # サーバーが正常実行されるかテスト
-python -m mcp_server_gemini_image_generator.server
+python -m gemini_image_mcp.server
 ```
 `Starting Gemini Image Generator MCP server...` メッセージが表示されれば成功！（Ctrl+C で終了）
 
@@ -60,7 +60,7 @@ python -m mcp_server_gemini_image_generator.server
     "gemini-image-generator": {
       "command": "/Users/ユーザー名/GeminiImageMCP/venv/bin/python",
       "args": [
-        "-m", "mcp_server_gemini_image_generator.server"
+        "-m", "gemini_image_mcp.server"
       ],
       "env": {
         "GEMINI_API_KEY": "ここに実際のAPIキーを入力",
@@ -78,7 +78,7 @@ python -m mcp_server_gemini_image_generator.server
     "gemini-image-generator": {
       "command": "/Users/ユーザー名/GeminiImageMCP/venv/bin/python",
       "args": [
-        "-m", "mcp_server_gemini_image_generator.server"
+        "-m", "gemini_image_mcp.server"
       ],
       "env": {
         "GEMINI_API_KEY": "AIzaSy...(実際のAPIキー)",
@@ -140,7 +140,7 @@ cd ~/GeminiImageMCP
 source venv/bin/activate
 export GEMINI_API_KEY="実際のAPIキー"
 export OUTPUT_IMAGE_PATH="~/Pictures/ai_generated"
-python -m mcp_server_gemini_image_generator.server
+python -m gemini_image_mcp.server
 ```
 
 ## 📊 提供ツール
