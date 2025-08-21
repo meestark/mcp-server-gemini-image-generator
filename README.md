@@ -109,8 +109,9 @@ mkdir -p ~/Pictures/ai_generated
 
 ### 画像生成
 ```
-美しい富士山と桜がある日本の風景を描いて
+東京タワーの可愛いイラストを描いて
 ```
+<img width="1024" height="1024" alt="image_Cute kawaii_54eac0c0" src="https://github.com/user-attachments/assets/2f508099-d365-4d80-a47c-a9ecf0d217ff" />
 
 ### 画像変換（ファイルパス）
 ```
@@ -120,8 +121,10 @@ mkdir -p ~/Pictures/ai_generated
 ### 画像変換（アップロード）
 画像を Claude にアップロード後:
 ```
-この画像を夜の風景に変えて
+背景をレインボーブリッジの夜景にしてくれ
 ```
+<img width="1024" height="1024" alt="image_Transform th_8231327e" src="https://github.com/user-attachments/assets/a5e36031-ac4f-4369-8e9e-8a0b175fb6e8" />
+
 
 ## 🔧 トラブルシューティング
 
