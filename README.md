@@ -89,6 +89,22 @@ python -m gemini_image_mcp.server
 }
 ```
 
+### スクリプト命令を使用する場合（簡単設定）
+```json
+{
+  "mcpServers": {
+    "gemini-image-generator": {
+      "command": "/Users/ユーザー名/GeminiImageMCP/venv/bin/gemini-image-mcp",
+      "env": {
+        "GEMINI_API_KEY": "AIzaSy...(実際のAPIキー)",
+        "OUTPUT_IMAGE_PATH": "/Users/ユーザー名/Pictures/ai_generated"
+      }
+    }
+  }
+}
+```
+※ この方法は `args` 指定が不要でより簡潔です
+
 ### 🚨 重要事項
 1. **絶対パス使用**: すべてのパスは完全パスで入力
 2. **API キー置換**: `ここに実際のAPIキーを入力` 部分を発行した実際のキーに置換
