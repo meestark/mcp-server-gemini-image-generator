@@ -45,7 +45,7 @@ pip install -e .
 # サーバーが正常実行されるかテスト
 python -m gemini_image_mcp.server
 ```
-`Starting Gemini Image Generator MCP server...` メッセージが表示されれば成功！（Ctrl+C で終了）
+`Starting Gemini Image Generator MCP server...` メッセージが表示されれば成功！（Ctrl+CまたはCtrl+Z で終了）
 
 ## ⚙️ ステップ3: Claude Desktop 設定
 
