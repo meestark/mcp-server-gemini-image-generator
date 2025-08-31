@@ -29,10 +29,16 @@ mcp = FastMCP("GeminiImageMCP")
 
 # ==================== Gemini API Interaction ====================
 
-# Default model can be overridden via environment variable
-DEFAULT_GEMINI_MODEL = os.environ.get(
+# Default models can be overridden via environment variables
+DEFAULT_GEMINI_IMAGE_MODEL = os.environ.get(
     "GEMINI_IMAGE_MODEL",
     "gemini-2.5-flash-image-preview",
+)
+
+# Separate default for text-only tasks (translation, filename generation)
+DEFAULT_GEMINI_TEXT_MODEL = os.environ.get(
+    "GEMINI_TEXT_MODEL",
+    "gemini-2.0-flash",
 )
 
 
@@ -70,7 +76,7 @@ def _extract_image_from_response(response) -> MCPImage:
 
 async def call_gemini(
     contents: List[Any],
-    model: str = DEFAULT_GEMINI_MODEL,
+    model: str = DEFAULT_GEMINI_IMAGE_MODEL,
     config: Optional[types.GenerateContentConfig] = None,
     text_only: bool = False,
 ) -> Union[str, bytes, MCPImage]:
@@ -143,7 +149,11 @@ async def convert_prompt_to_filename(prompt: str) -> str:
         """
         
         # Call Gemini and get the filename
-        generated_filename = await call_gemini(filename_prompt, text_only=True)
+        generated_filename = await call_gemini(
+            filename_prompt,
+            model=DEFAULT_GEMINI_TEXT_MODEL,
+            text_only=True,
+        )
         logger.info(f"Generated filename: {generated_filename}")
         
         # Return the filename only, without path or extension
@@ -170,7 +180,11 @@ async def translate_prompt(text: str) -> str:
         prompt = get_translate_prompt(text)
 
         # Call Gemini and get the translated prompt
-        translated_prompt = await call_gemini(prompt, text_only=True)
+        translated_prompt = await call_gemini(
+            prompt,
+            model=DEFAULT_GEMINI_TEXT_MODEL,
+            text_only=True,
+        )
         logger.info(f"Original prompt: {text}")
         logger.info(f"Translated prompt: {translated_prompt}")
         
@@ -187,7 +201,7 @@ async def translate_prompt(text: str) -> str:
 async def process_image_with_gemini(
     contents: List[Any],
     prompt: str,
-    model: str = DEFAULT_GEMINI_MODEL,
+    model: str = DEFAULT_GEMINI_IMAGE_MODEL,
 ) -> MCPImage:
     """Process an image request with Gemini and return an MCPImage (no disk writes).
 
@@ -324,9 +338,12 @@ async def transform_image_from_encoded(encoded_image: str, prompt: str) -> MCPIm
         
         # Translate the prompt to English
         translated_prompt = await translate_prompt(prompt)
+
+        # Create detailed generation prompt
+        contents = get_image_transformation_prompt(translated_prompt)
         
         # Process the transformation
-        return await process_image_transform(source_image, translated_prompt, prompt)
+        return await process_image_transform(source_image, contents, prompt)
         
     except Exception as e:
         error_msg = f"Error transforming image: {str(e)}"
