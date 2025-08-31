@@ -29,11 +29,17 @@ mcp = FastMCP("GeminiImageMCP")
 
 # ==================== Gemini API Interaction ====================
 
+# Default model can be overridden via environment variable
+DEFAULT_GEMINI_MODEL = os.environ.get(
+    "GEMINI_IMAGE_MODEL",
+    "gemini-2.0-flash-preview-image-generation",
+)
+
 async def call_gemini(
-    contents: List[Any], 
-    model: str = "gemini-2.0-flash-preview-image-generation", 
-    config: Optional[types.GenerateContentConfig] = None, 
-    text_only: bool = False
+    contents: List[Any],
+    model: str = DEFAULT_GEMINI_MODEL,
+    config: Optional[types.GenerateContentConfig] = None,
+    text_only: bool = False,
 ) -> Union[str, bytes]:
     """Call Gemini API with flexible configuration for different use cases.
     
@@ -150,9 +156,9 @@ async def translate_prompt(text: str) -> str:
 # ==================== Image Processing Functions ====================
 
 async def process_image_with_gemini(
-    contents: List[Any], 
-    prompt: str, 
-    model: str = "gemini-2.0-flash-preview-image-generation"
+    contents: List[Any],
+    prompt: str,
+    model: str = DEFAULT_GEMINI_MODEL,
 ) -> str:
     """Process an image request with Gemini and save the result.
     
@@ -344,7 +350,8 @@ async def transform_image_from_file(image_file_path: str, prompt: str) -> str:
 
 def main():
     logger.info("Starting GeminiImageMCP server...")
-    mcp.run(transport="stdio")
+    #mcp.run(transport="stdio")
+    mcp.run(transport="sse", host="0.0.0.0", port=9005)
     logger.info("Server stopped")
 
 if __name__ == "__main__":

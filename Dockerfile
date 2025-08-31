@@ -12,6 +12,7 @@ WORKDIR /app
 RUN --mount=type=cache,target=UV_CACHE_DIR \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=src,target=src \
     uv sync --frozen --no-install-project --no-dev --no-editable
 
 ADD . /app
@@ -23,6 +24,8 @@ RUN --mount=type=cache,target=UV_CACHE_DIR \
 ARG OUTPUT_IMAGE_PATH=/images
 RUN mkdir -p ${OUTPUT_IMAGE_PATH}
 ENV OUTPUT_IMAGE_PATH=${OUTPUT_IMAGE_PATH}
+
+EXPOSE 9005
 
 # Add virtual environment to PATH
 ENV PATH="/app/.venv/bin:$PATH"
