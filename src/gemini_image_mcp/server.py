@@ -9,7 +9,7 @@ from typing import Optional, Any, Union, List, Tuple
 import PIL.Image
 from google import genai
 from google.genai import types
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 from .prompts import get_image_generation_prompt, get_image_transformation_prompt, get_translate_prompt
 from .utils import save_image
@@ -249,7 +249,7 @@ async def load_image_from_base64(encoded_image: str) -> Tuple[PIL.Image.Image, s
 
 # ==================== MCP Tools ====================
 
-@mcp.tool()
+@mcp.tool
 async def generate_image_from_text(prompt: str) -> str:
     """Generate an image based on the given text prompt using Google's Gemini model.
 
@@ -275,7 +275,7 @@ async def generate_image_from_text(prompt: str) -> str:
         return error_msg
 
 
-@mcp.tool()
+@mcp.tool
 async def transform_image_from_encoded(encoded_image: str, prompt: str) -> str:
     """Transform an existing image based on the given text prompt using Google's Gemini model.
 
@@ -306,7 +306,7 @@ async def transform_image_from_encoded(encoded_image: str, prompt: str) -> str:
         return error_msg
 
 
-@mcp.tool()
+@mcp.tool
 async def transform_image_from_file(image_file_path: str, prompt: str) -> str:
     """Transform an existing image file based on the given text prompt using Google's Gemini model.
 

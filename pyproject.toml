@@ -8,7 +8,7 @@ authors = [{name = "Sungmin Koo",email = "sungmin.koo@nhn-playart.com"}]
 keywords = ["http", "mcp", "llm", "automation"]
 license = { text = "MIT" }
 dependencies = [
-    "fastmcp>=0.4.1",
+    "fastmcp>=2.9",
     "google>=3.0.0",
     "google-genai>=1.7.0",
     "pillow>=11.1.0",
