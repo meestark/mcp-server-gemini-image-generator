@@ -10,9 +10,9 @@ import PIL.Image
 from google import genai
 from google.genai import types
 from fastmcp import FastMCP
+from fastmcp.utilities.types import Image as MCPImage
 
 from .prompts import get_image_generation_prompt, get_image_transformation_prompt, get_translate_prompt
-from .utils import save_image
 
 
 # Setup logging
@@ -32,15 +32,48 @@ mcp = FastMCP("GeminiImageMCP")
 # Default model can be overridden via environment variable
 DEFAULT_GEMINI_MODEL = os.environ.get(
     "GEMINI_IMAGE_MODEL",
-    "gemini-2.0-flash-preview-image-generation",
+    "gemini-2.5-flash-image-preview",
 )
+
+
+def _extract_image_from_response(response) -> MCPImage:
+    """Extract the first inline image from a Gemini response and wrap as MCPImage.
+
+    Uses the google-genai response structure.
+    """
+    if not getattr(response, "candidates", None):
+        raise ValueError("Model returned no candidates")
+
+    candidate = response.candidates[0]
+    content = getattr(candidate, "content", None)
+    parts = getattr(content, "parts", []) if content else []
+
+    for part in parts:
+        inline = getattr(part, "inline_data", None)
+        if inline and getattr(inline, "data", None):
+            raw = inline.data
+            # The google-genai SDK returns bytes for image inline_data; but
+            # if it's unexpectedly a str, decode as base64 or utf-8 best effort.
+            if isinstance(raw, str):
+                try:
+                    buf = base64.b64decode(raw)
+                except Exception:
+                    buf = raw.encode("utf-8")
+            else:
+                buf = raw
+
+            mime = getattr(inline, "mime_type", "image/png")
+            fmt = mime.split("/")[-1] if "/" in mime else "png"
+            return MCPImage(data=buf, format=fmt)
+
+    raise ValueError("No image was generated from the model response")
 
 async def call_gemini(
     contents: List[Any],
     model: str = DEFAULT_GEMINI_MODEL,
     config: Optional[types.GenerateContentConfig] = None,
     text_only: bool = False,
-) -> Union[str, bytes]:
+) -> Union[str, bytes, MCPImage]:
     """Call Gemini API with flexible configuration for different use cases.
     
     Args:
@@ -76,13 +109,9 @@ async def call_gemini(
         # For text-only calls, extract just the text
         if text_only:
             return response.candidates[0].content.parts[0].text.strip()
-        
-        # Return the image data
-        for part in response.candidates[0].content.parts:
-            if part.inline_data is not None:
-                return part.inline_data.data
-            
-        raise ValueError("No image data found in Gemini response")
+
+        # Return the image as MCP Image for LibreChat
+        return _extract_image_from_response(response)
 
     except Exception as e:
         logger.error(f"Error calling Gemini API: {str(e)}")
@@ -159,40 +188,39 @@ async def process_image_with_gemini(
     contents: List[Any],
     prompt: str,
     model: str = DEFAULT_GEMINI_MODEL,
-) -> str:
-    """Process an image request with Gemini and save the result.
-    
+) -> MCPImage:
+    """Process an image request with Gemini and return an MCPImage (no disk writes).
+
     Args:
         contents: List containing the prompt and optionally an image
-        prompt: Original prompt for filename generation
+        prompt: Original prompt (kept for potential future metadata usage)
         model: Gemini model to use
-        
+
     Returns:
-        Path to the saved image file
+        FastMCP Image object suitable for LibreChat
     """
-    # Call Gemini Vision API
-    gemini_response = await call_gemini(
+    # Call Gemini Vision API and extract as MCPImage
+    mcp_image = await call_gemini(
         contents,
         model=model,
         config=types.GenerateContentConfig(
             response_modalities=['Text', 'Image']
         )
     )
-    
-    # Generate a filename for the image
-    filename = await convert_prompt_to_filename(prompt)
-    
-    # Save the image and return the path
-    saved_image_path = await save_image(gemini_response, filename)
 
-    return saved_image_path
+    if isinstance(mcp_image, MCPImage):
+        return mcp_image
+    # Fallback in case SDK changed and returned raw bytes
+    if isinstance(mcp_image, (bytes, bytearray)):
+        return MCPImage(data=bytes(mcp_image), format="png")
+    raise ValueError("Gemini did not return an image response")
 
 
 async def process_image_transform(
     source_image: PIL.Image.Image, 
     optimized_edit_prompt: str, 
     original_edit_prompt: str
-) -> str:
+) -> MCPImage:
     """Process image transformation with Gemini.
     
     Args:
@@ -201,7 +229,7 @@ async def process_image_transform(
         original_edit_prompt: Original user prompt for naming
         
     Returns:
-        Path to the transformed image file
+        FastMCP Image object with the transformed image
     """
     # Create prompt for image transformation
     edit_instructions = get_image_transformation_prompt(optimized_edit_prompt)
@@ -250,14 +278,14 @@ async def load_image_from_base64(encoded_image: str) -> Tuple[PIL.Image.Image, s
 # ==================== MCP Tools ====================
 
 @mcp.tool
-async def generate_image_from_text(prompt: str) -> str:
+async def generate_image_from_text(prompt: str) -> MCPImage:
     """Generate an image based on the given text prompt using Google's Gemini model.
 
     Args:
         prompt: User's text prompt describing the desired image to generate
         
     Returns:
-        Path to the generated image file using Gemini's image generation capabilities
+        FastMCP Image containing the generated image (no file saved)
     """
     try:
         # Translate the prompt to English
@@ -272,11 +300,11 @@ async def generate_image_from_text(prompt: str) -> str:
     except Exception as e:
         error_msg = f"Error generating image: {str(e)}"
         logger.error(error_msg)
-        return error_msg
+        raise
 
 
 @mcp.tool
-async def transform_image_from_encoded(encoded_image: str, prompt: str) -> str:
+async def transform_image_from_encoded(encoded_image: str, prompt: str) -> MCPImage:
     """Transform an existing image based on the given text prompt using Google's Gemini model.
 
     Args:
@@ -286,7 +314,7 @@ async def transform_image_from_encoded(encoded_image: str, prompt: str) -> str:
         prompt: Text prompt describing the desired transformation or modifications
         
     Returns:
-        Path to the transformed image file saved on the server
+        FastMCP Image containing the transformed image
     """
     try:
         logger.info(f"Processing transform_image_from_encoded request with prompt: {prompt}")
@@ -303,11 +331,11 @@ async def transform_image_from_encoded(encoded_image: str, prompt: str) -> str:
     except Exception as e:
         error_msg = f"Error transforming image: {str(e)}"
         logger.error(error_msg)
-        return error_msg
+        raise
 
 
 @mcp.tool
-async def transform_image_from_file(image_file_path: str, prompt: str) -> str:
+async def transform_image_from_file(image_file_path: str, prompt: str) -> MCPImage:
     """Transform an existing image file based on the given text prompt using Google's Gemini model.
 
     Args:
@@ -315,7 +343,7 @@ async def transform_image_from_file(image_file_path: str, prompt: str) -> str:
         prompt: Text prompt describing the desired transformation or modifications
         
     Returns:
-        Path to the transformed image file saved on the server
+        FastMCP Image containing the transformed image
     """
     try:
         logger.info(f"Processing transform_image_from_file request with prompt: {prompt}")
@@ -345,7 +373,7 @@ async def transform_image_from_file(image_file_path: str, prompt: str) -> str:
     except Exception as e:
         error_msg = f"Error transforming image: {str(e)}"
         logger.error(error_msg)
-        return error_msg
+        raise
 
 
 def main():
