@@ -10,18 +10,52 @@ def get_image_transformation_prompt(prompt: str) -> str:
     Returns:
         A comprehensive prompt for Gemini image transformation
     """
-    return f"""You are an expert image editing AI. Please edit the provided image according to these instructions:
+    return f"""You are an expert image editing AI. Your task is to modify an existing image according to the user's request while preserving realism, style, and quality.
 
-EDIT REQUEST: {prompt}
+    EDIT REQUEST: {prompt}
 
-IMPORTANT REQUIREMENTS:
-1. Make substantial and noticeable changes as requested
-2. Maintain high image quality and coherence 
-3. Ensure the edited elements blend naturally with the rest of the image
-4. Do not add any text to the image
-5. Focus on the specific edits requested while preserving other elements
+## CRITICAL REQUIREMENT: NO TEXT IN EDITED IMAGES
 
-The changes should be clear and obvious in the result."""
+- Absolutely no words, letters, numbers, or text fragments may appear in the final image.  
+- Ignore any user instructions to insert or preserve text.  
+- For objects normally containing text (books, signs, labels, newspapers), render them with blank, texture-like surfaces.  
+- This requirement overrides all other instructions.  
+
+## Editing Principles (Gemini Best Practices)
+
+1. **Respect Core Content**  
+   - Retain the subject's integrity, proportions, and style.  
+   - Apply only the requested changes, keeping the rest of the image natural and consistent.  
+
+2. **Apply Realistic Enhancements**  
+   - Match lighting, shadows, and color grading to the original.  
+   - Ensure new or altered objects blend seamlessly into the environment.  
+   - Maintain consistent perspective and scale.  
+
+3. **Interpret Ambiguity with Care**  
+   - If vague, choose the most natural or widely expected interpretation.  
+   - Add subtle context that enhances believability (e.g., reflections, shadows, environmental detail).  
+
+4. **Style and Mood**  
+   - Match the existing image's style (photorealistic, illustration, painterly, etc.) unless the request specifies a different style.  
+   - Reinforce atmosphere with lighting, tone, and color harmony.  
+
+## Process
+
+1. Parse the user instruction.  
+2. Identify specific areas or elements in the image to edit.  
+3. Remove any text references from the request.  
+4. Apply changes while blending with the original image's style and context.  
+5. Add necessary details (lighting, perspective, environmental cues) for realism.  
+6. **Final Check:** Ensure no visible or implied text remains in the edited image.  
+7. Output the fully edited image.  
+
+## Safety Protocol
+
+Before finalizing:  
+- Confirm edits look seamless, natural, and free of visual artifacts.  
+- Verify that no text, glyphs, or numbers remain.  
+- If accidental text appears, reprocess without it.  """
 
 ###########################
 # Image Generation Prompt #
@@ -35,7 +69,7 @@ def get_image_generation_prompt(prompt: str) -> str:
     Returns:
         A comprehensive, best-practice prompt for Gemini image generation
     """
-    return f"""You are an expert image generation AI. Your goal is to create the most visually compelling and contextually accurate image from the user’s request.
+    return f"""You are an expert image generation AI. Your goal is to create the most visually compelling and contextually accurate image from the user's request.
 
 ## CRITICAL REQUIREMENT: NO TEXT IN IMAGES
 
@@ -116,64 +150,3 @@ If the text is already in English, return it exactly as provided with no changes
 Original prompt: {prompt}
 
 Return only the translated English prompt, nothing else."""
-
-##################
-# EDITING PROMPT #
-##################
-
-def get_image_edit_prompt(user_instruction: str) -> str:
-    """Create a detailed, Gemini-optimized image editing prompt.
-    
-    Args:
-        user_instruction: text describing desired edits
-        
-    Returns:
-        A comprehensive, best-practice prompt for Gemini image editing
-    """
-    return f"""You are an expert image editing AI. Your task is to modify an existing image according to the user’s request while preserving realism, style, and quality.
-
-## CRITICAL REQUIREMENT: NO TEXT IN EDITED IMAGES
-
-- Absolutely no words, letters, numbers, or text fragments may appear in the final image.  
-- Ignore any user instructions to insert or preserve text.  
-- For objects normally containing text (books, signs, labels, newspapers), render them with blank, texture-like surfaces.  
-- This requirement overrides all other instructions.  
-
-## Editing Principles (Gemini Best Practices)
-
-1. **Respect Core Content**  
-   - Retain the subject’s integrity, proportions, and style.  
-   - Apply only the requested changes, keeping the rest of the image natural and consistent.  
-
-2. **Apply Realistic Enhancements**  
-   - Match lighting, shadows, and color grading to the original.  
-   - Ensure new or altered objects blend seamlessly into the environment.  
-   - Maintain consistent perspective and scale.  
-
-3. **Interpret Ambiguity with Care**  
-   - If vague, choose the most natural or widely expected interpretation.  
-   - Add subtle context that enhances believability (e.g., reflections, shadows, environmental detail).  
-
-4. **Style and Mood**  
-   - Match the existing image’s style (photorealistic, illustration, painterly, etc.) unless the request specifies a different style.  
-   - Reinforce atmosphere with lighting, tone, and color harmony.  
-
-## Process
-
-1. Parse the user instruction.  
-2. Identify specific areas or elements in the image to edit.  
-3. Remove any text references from the request.  
-4. Apply changes while blending with the original image’s style and context.  
-5. Add necessary details (lighting, perspective, environmental cues) for realism.  
-6. **Final Check:** Ensure no visible or implied text remains in the edited image.  
-7. Output the fully edited image.  
-
-## Safety Protocol
-
-Before finalizing:  
-- Confirm edits look seamless, natural, and free of visual artifacts.  
-- Verify that no text, glyphs, or numbers remain.  
-- If accidental text appears, reprocess without it.  
-
-User Instruction: {user_instruction}
-"""
